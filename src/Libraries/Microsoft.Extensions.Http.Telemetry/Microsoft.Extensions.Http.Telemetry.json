@@ -97,32 +97,20 @@
       "Stage": "Stable",
       "Methods": [
         {
-          "Member": "static Microsoft.Extensions.DependencyInjection.IServiceCollection Microsoft.Extensions.Http.Telemetry.Logging.HttpClientLoggingExtensions.AddDefaultHttpClientLogging(this Microsoft.Extensions.DependencyInjection.IServiceCollection services);",
-          "Stage": "Stable"
-        },
-        {
-          "Member": "static Microsoft.Extensions.DependencyInjection.IServiceCollection Microsoft.Extensions.Http.Telemetry.Logging.HttpClientLoggingExtensions.AddDefaultHttpClientLogging(this Microsoft.Extensions.DependencyInjection.IServiceCollection services, Microsoft.Extensions.Configuration.IConfigurationSection section);",
-          "Stage": "Stable"
-        },
-        {
-          "Member": "static Microsoft.Extensions.DependencyInjection.IServiceCollection Microsoft.Extensions.Http.Telemetry.Logging.HttpClientLoggingExtensions.AddDefaultHttpClientLogging(this Microsoft.Extensions.DependencyInjection.IServiceCollection services, System.Action<Microsoft.Extensions.Http.Telemetry.Logging.LoggingOptions> configure);",
-          "Stage": "Stable"
-        },
-        {
           "Member": "static Microsoft.Extensions.DependencyInjection.IServiceCollection Microsoft.Extensions.Http.Telemetry.Logging.HttpClientLoggingExtensions.AddHttpClientLogEnricher<T>(this Microsoft.Extensions.DependencyInjection.IServiceCollection services);",
           "Stage": "Stable"
         },
         {
-          "Member": "static Microsoft.Extensions.DependencyInjection.IHttpClientBuilder Microsoft.Extensions.Http.Telemetry.Logging.HttpClientLoggingExtensions.AddHttpClientLogging(this Microsoft.Extensions.DependencyInjection.IHttpClientBuilder builder);",
-          "Stage": "Stable"
+          "Member": "static Microsoft.Extensions.DependencyInjection.IHttpClientBuilder Microsoft.Extensions.Http.Telemetry.Logging.HttpClientLoggingExtensions.AddEnrichableLogging(this Microsoft.Extensions.DependencyInjection.IHttpClientBuilder builder);",
+          "Stage": "Experimental"
         },
         {
-          "Member": "static Microsoft.Extensions.DependencyInjection.IHttpClientBuilder Microsoft.Extensions.Http.Telemetry.Logging.HttpClientLoggingExtensions.AddHttpClientLogging(this Microsoft.Extensions.DependencyInjection.IHttpClientBuilder builder, Microsoft.Extensions.Configuration.IConfigurationSection section);",
-          "Stage": "Stable"
+          "Member": "static Microsoft.Extensions.DependencyInjection.IHttpClientBuilder Microsoft.Extensions.Http.Telemetry.Logging.HttpClientLoggingExtensions.AddEnrichableLogging(this Microsoft.Extensions.DependencyInjection.IHttpClientBuilder builder, Microsoft.Extensions.Configuration.IConfigurationSection section);",
+          "Stage": "Experimental"
         },
         {
-          "Member": "static Microsoft.Extensions.DependencyInjection.IHttpClientBuilder Microsoft.Extensions.Http.Telemetry.Logging.HttpClientLoggingExtensions.AddHttpClientLogging(this Microsoft.Extensions.DependencyInjection.IHttpClientBuilder builder, System.Action<Microsoft.Extensions.Http.Telemetry.Logging.LoggingOptions> configure);",
-          "Stage": "Stable"
+          "Member": "static Microsoft.Extensions.DependencyInjection.IHttpClientBuilder Microsoft.Extensions.Http.Telemetry.Logging.HttpClientLoggingExtensions.AddEnrichableLogging(this Microsoft.Extensions.DependencyInjection.IHttpClientBuilder builder, System.Action<Microsoft.Extensions.Http.Telemetry.Logging.LoggingOptions> configure);",
+          "Stage": "Experimental"
         }
       ]
     },

@@ -42,9 +42,15 @@
     <PackageReference Include="Microsoft.Extensions.DiagnosticAdapter" />
     <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
-    <PackageReference Include="Microsoft.Extensions.Http" />
+    <!-- <PackageReference Include="Microsoft.Extensions.Http" /> -->
     <PackageReference Include="System.Text.Json" />
     <PackageReference Include="System.Collections.Immutable" Condition="!$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net8.0'))" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Extensions.Http">
+      <HintPath>C:\Users\knatalia\dev\git\runtime\artifacts\bin\Microsoft.Extensions.Http\Release\netstandard2.0\Microsoft.Extensions.Http.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

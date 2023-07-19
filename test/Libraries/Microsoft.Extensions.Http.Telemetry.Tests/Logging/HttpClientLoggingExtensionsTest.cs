@@ -24,50 +24,31 @@ using Xunit;
 
 namespace Microsoft.Extensions.Http.Telemetry.Logging.Test;
 
-public class HttpClientLoggingExtensionsTest
+public class EnrichableLoggingExtensionsTest
 {
     private readonly Fixture _fixture;
 
-    public HttpClientLoggingExtensionsTest()
+    public EnrichableLoggingExtensionsTest()
     {
         _fixture = new Fixture();
     }
 
     [Fact]
-    public void AddHttpClientLogging_AnyArgumentIsNull_Throws()
+    public void AddEnrichableLogging_AnyArgumentIsNull_Throws()
     {
-        var act = () => ((IHttpClientBuilder)null!).AddHttpClientLogging();
+        var act = () => ((IHttpClientBuilder)null!).AddEnrichableLogging();
         act.Should().Throw<ArgumentNullException>();
 
-        act = () => ((IHttpClientBuilder)null!).AddHttpClientLogging(_ => { });
+        act = () => ((IHttpClientBuilder)null!).AddEnrichableLogging(_ => { });
         act.Should().Throw<ArgumentNullException>();
 
-        act = () => ((IHttpClientBuilder)null!).AddHttpClientLogging(Mock.Of<IConfigurationSection>());
+        act = () => ((IHttpClientBuilder)null!).AddEnrichableLogging(Mock.Of<IConfigurationSection>());
         act.Should().Throw<ArgumentNullException>();
 
-        act = () => Mock.Of<IHttpClientBuilder>().AddHttpClientLogging((Action<LoggingOptions>)null!);
+        act = () => Mock.Of<IHttpClientBuilder>().AddEnrichableLogging((Action<LoggingOptions>)null!);
         act.Should().Throw<ArgumentNullException>();
 
-        act = () => Mock.Of<IHttpClientBuilder>().AddHttpClientLogging((IConfigurationSection)null!);
-        act.Should().Throw<ArgumentNullException>();
-    }
-
-    [Fact]
-    public void AddHttpClientLogging_ServiceCollection_AnyArgumentIsNull_Throws()
-    {
-        var act = () => ((IServiceCollection)null!).AddDefaultHttpClientLogging();
-        act.Should().Throw<ArgumentNullException>();
-
-        act = () => ((IServiceCollection)null!).AddDefaultHttpClientLogging(_ => { });
-        act.Should().Throw<ArgumentNullException>();
-
-        act = () => ((IServiceCollection)null!).AddDefaultHttpClientLogging(Mock.Of<IConfigurationSection>());
-        act.Should().Throw<ArgumentNullException>();
-
-        act = () => Mock.Of<IServiceCollection>().AddDefaultHttpClientLogging((Action<LoggingOptions>)null!);
-        act.Should().Throw<ArgumentNullException>();
-
-        act = () => Mock.Of<IServiceCollection>().AddDefaultHttpClientLogging((IConfigurationSection)null!);
+        act = () => Mock.Of<IHttpClientBuilder>().AddEnrichableLogging((IConfigurationSection)null!);
         act.Should().Throw<ArgumentNullException>();
     }
 
@@ -79,16 +60,16 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public void AddHttpClientLogging_ConfiguredOptionsWithNamedClient_ShouldNotBeSame()
+    public void AddEnrichableLogging_ConfiguredOptionsWithNamedClient_ShouldNotBeSame()
     {
         var services = new ServiceCollection();
 
         var provider = services
             .AddHttpClient("test1")
-            .AddHttpClientLogging(options => options.BodyReadTimeout = TimeSpan.FromSeconds(1))
+            .AddEnrichableLogging(options => options.BodyReadTimeout = TimeSpan.FromSeconds(1))
             .Services
             .AddHttpClient("test2")
-            .AddHttpClientLogging(options => options.BodyReadTimeout = TimeSpan.FromSeconds(2))
+            .AddEnrichableLogging(options => options.BodyReadTimeout = TimeSpan.FromSeconds(2))
             .Services
             .BuildServiceProvider();
 
@@ -102,16 +83,16 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public void AddHttpClientLogging_ConfiguredOptionsWithTypedClient_ShouldNotBeSame()
+    public void AddEnrichableLogging_ConfiguredOptionsWithTypedClient_ShouldNotBeSame()
     {
         var services = new ServiceCollection();
 
         var provider = services
             .AddHttpClient<ITestHttpClient1, TestHttpClient1>()
-            .AddHttpClientLogging(options => options.BodyReadTimeout = TimeSpan.FromSeconds(1))
+            .AddEnrichableLogging(options => options.BodyReadTimeout = TimeSpan.FromSeconds(1))
             .Services
             .AddHttpClient<ITestHttpClient2, TestHttpClient2>()
-            .AddHttpClientLogging(options => options.BodyReadTimeout = TimeSpan.FromSeconds(2))
+            .AddEnrichableLogging(options => options.BodyReadTimeout = TimeSpan.FromSeconds(2))
             .Services
             .BuildServiceProvider();
 
@@ -125,16 +106,16 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public void AddHttpClientLogging_DefaultOptions_CreatesOptionsCorrectly()
+    public void AddEnrichableLogging_DefaultOptions_CreatesOptionsCorrectly()
     {
         var services = new ServiceCollection();
 
         var provider = services
             .AddHttpClient("")
-            .AddHttpClientLogging(o => o.RequestHeadersDataClasses.Add("test1", SimpleClassifications.PrivateData))
+            .AddEnrichableLogging(o => o.RequestHeadersDataClasses.Add("test1", SimpleClassifications.PrivateData))
             .Services
             .AddHttpClient("")
-            .AddHttpClientLogging(o => o.RequestHeadersDataClasses.Add("test2", SimpleClassifications.PrivateData))
+            .AddEnrichableLogging(o => o.RequestHeadersDataClasses.Add("test2", SimpleClassifications.PrivateData))
             .Services
             .BuildServiceProvider();
 
@@ -145,7 +126,7 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public void AddHttpClientLogging_GivenActionDelegate_RegistersInDi()
+    public void AddEnrichableLogging_GivenActionDelegate_RegistersInDi()
     {
         var requestBodyContentType = "application/json";
         var responseBodyContentType = "application/json";
@@ -162,7 +143,7 @@ public class HttpClientLoggingExtensionsTest
 
         services
             .AddHttpClient("test")
-            .AddHttpClientLogging(options =>
+            .AddEnrichableLogging(options =>
             {
                 options.RequestBodyContentTypes.Add(requestBodyContentType);
                 options.ResponseBodyContentTypes.Add(responseBodyContentType);
@@ -198,7 +179,7 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public async Task AddHttpClientLogging_GivenInvalidOptions_Throws()
+    public async Task AddEnrichableLogging_GivenInvalidOptions_Throws()
     {
         using var host = FakeHost.CreateBuilder()
             .ConfigureServices(services =>
@@ -206,7 +187,7 @@ public class HttpClientLoggingExtensionsTest
                 services
                     .AddFakeRedaction()
                     .AddHttpClient("test")
-                    .AddHttpClientLogging(options =>
+                    .AddEnrichableLogging(options =>
                     {
                         options.BodyReadTimeout = TimeSpan.Zero;
                         options.BodySizeLimit = -1;
@@ -224,13 +205,13 @@ public class HttpClientLoggingExtensionsTest
     [InlineData(30)]
     [InlineData(59)]
     [InlineData(17)]
-    public void AddHttpClientLogging_GivenConfigurationSection_SetsTimeoutCorrectly(int seconds)
+    public void AddEnrichableLogging_GivenConfigurationSection_SetsTimeoutCorrectly(int seconds)
     {
         var timeoutValue = TimeSpan.FromSeconds(seconds);
 
         using var provider = new ServiceCollection()
             .AddHttpClient("test")
-            .AddHttpClientLogging(TestConfiguration.GetHttpClientLoggingConfigurationSection(timeoutValue))
+            .AddEnrichableLogging(TestConfiguration.GetHttpClientLoggingConfigurationSection(timeoutValue))
             .Services
             .BuildServiceProvider();
         var options = provider
@@ -254,7 +235,7 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public void AddHttpClientLogging_ServiceCollection_GivenActionDelegate_RegistersInDi()
+    public void AddEnrichableLogging_ServiceCollection_GivenActionDelegate_RegistersInDi()
     {
         var requestBodyContentType = "application/json";
         var responseBodyContentType = "application/json";
@@ -272,7 +253,7 @@ public class HttpClientLoggingExtensionsTest
         services
             .AddFakeRedaction()
             .AddHttpClient()
-            .AddDefaultHttpClientLogging(options =>
+            .ConfigureHttpClientDefaults(b => b.AddEnrichableLogging(options =>
             {
                 options.RequestBodyContentTypes.Add(requestBodyContentType);
                 options.ResponseBodyContentTypes.Add(responseBodyContentType);
@@ -284,7 +265,7 @@ public class HttpClientLoggingExtensionsTest
                 options.ResponseHeadersDataClasses.Add(responseHeader, SimpleClassifications.PrivateData);
                 options.RouteParameterDataClasses.Add(paramToRedact);
                 options.LogRequestStart = logStart;
-            });
+            }));
 
         using var provider = services.BuildServiceProvider();
         var options = provider.GetRequiredService<IOptions<LoggingOptions>>().Value;
@@ -311,16 +292,16 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public async Task AddHttpClientLogging_ServiceCollection_GivenInvalidOptions_Throws()
+    public async Task AddEnrichableLogging_ServiceCollection_GivenInvalidOptions_Throws()
     {
         var provider = new ServiceCollection()
             .AddFakeRedaction()
             .AddHttpClient()
-            .AddDefaultHttpClientLogging(options =>
+            .ConfigureHttpClientDefaults(b => b.AddEnrichableLogging(options =>
             {
                 options.BodyReadTimeout = TimeSpan.Zero;
                 options.BodySizeLimit = -1;
-            })
+            }))
             .BuildServiceProvider();
 
         var act = () =>
@@ -330,51 +311,20 @@ public class HttpClientLoggingExtensionsTest
         await act.Should().ThrowAsync<OptionsValidationException>().ConfigureAwait(false);
     }
 
-    [Fact]
-    public void AddHttpClientLogging_ServiceCollectionAndHttpClientBuilder_Throws()
-    {
-        var provider = new ServiceCollection()
-            .AddFakeRedaction()
-            .AddHttpClient("test")
-            .AddHttpClientLogging().Services
-            .AddDefaultHttpClientLogging()
-            .BuildServiceProvider();
-
-        var act = () => provider.GetRequiredService<IHttpClientFactory>().CreateClient("test");
-        act.Should().Throw<InvalidOperationException>().WithMessage(HttpClientLoggingExtensions.HandlerAddedTwiceExceptionMessage);
-    }
-
-    [Fact]
-    public void AddHttpClientLogging_HttpClientBuilderAndServiceCollection_Throws()
-    {
-        var provider = new ServiceCollection()
-            .AddFakeRedaction()
-            .AddDefaultHttpClientLogging()
-            .AddHttpClient("test")
-            .ConfigureHttpMessageHandlerBuilder(b =>
-                b.AdditionalHandlers.Add(Mock
-                    .Of<DelegatingHandler>())) // this is to kill mutants with .Any() vs. .All() calls when detecting already added delegating handlers.
-            .AddHttpClientLogging().Services
-            .BuildServiceProvider();
-
-        var act = () => provider.GetRequiredService<IHttpClientFactory>().CreateClient("test");
-        act.Should().Throw<InvalidOperationException>().WithMessage(HttpClientLoggingExtensions.HandlerAddedTwiceExceptionMessage);
-    }
-
     [Theory]
     [InlineData(2)]
     [InlineData(5)]
     [InlineData(30)]
     [InlineData(59)]
     [InlineData(17)]
-    public void AddHttpClientLogging_ServiceCollection_GivenConfigurationSection_SetsTimeoutCorrectly(int seconds)
+    public void AddEnrichableLogging_ServiceCollection_GivenConfigurationSection_SetsTimeoutCorrectly(int seconds)
     {
         var timeoutValue = TimeSpan.FromSeconds(seconds);
 
         using var provider = new ServiceCollection()
             .AddFakeRedaction()
             .AddHttpClient()
-            .AddDefaultHttpClientLogging(TestConfiguration.GetHttpClientLoggingConfigurationSection(timeoutValue))
+            .ConfigureHttpClientDefaults(b => b.AddEnrichableLogging(TestConfiguration.GetHttpClientLoggingConfigurationSection(timeoutValue)))
             .BuildServiceProvider();
         var options = provider
             .GetRequiredService<IOptions<LoggingOptions>>().Value;
@@ -387,12 +337,12 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public void AddHttpClientLogging_ServiceCollection_CreatesClientSuccessfully()
+    public void AddEnrichableLogging_ServiceCollection_CreatesClientSuccessfully()
     {
         using var sp = new ServiceCollection()
             .AddFakeRedaction()
             .AddHttpClient()
-            .AddDefaultHttpClientLogging()
+            .ConfigureHttpClientDefaults(b => b.AddEnrichableLogging())
             .BuildServiceProvider();
 
         using var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient();
@@ -400,14 +350,14 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public async Task AddHttpClientLogging_ServiceCollectionAndEnrichers_EnrichesLogsWithAllEnrichers()
+    public async Task AddEnrichableLogging_ServiceCollectionAndEnrichers_EnrichesLogsWithAllEnrichers()
     {
         const string RequestPath = "https://we.wont.hit.this.dd22anyway.com";
 
         await using var sp = new ServiceCollection()
             .AddFakeLogging()
             .AddFakeRedaction()
-            .AddDefaultHttpClientLogging()
+            .ConfigureHttpClientDefaults(b => b.AddEnrichableLogging())
             .AddHttpClientLogEnricher<EnricherWithCounter>()
             .AddHttpClientLogEnricher<TestEnricher>()
             .AddHttpClient("testClient").Services
@@ -423,7 +373,7 @@ public class HttpClientLoggingExtensionsTest
 
         _ = await httpClient.SendAsync(httpRequestMessage).ConfigureAwait(false);
         var collector = sp.GetFakeLogCollector();
-        var logRecord = collector.GetSnapshot().Single(logRecord => logRecord.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.HttpLoggingHandler");
+        var logRecord = collector.GetSnapshot().Single(logRecord => logRecord.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.EnrichableHttpClientLogger");
 
         Assert.Empty(logRecord.Message);
         var state = logRecord.StructuredState;
@@ -438,7 +388,7 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public async Task AddHttpClientLogging_WithNamedHttpClients_WorksCorrectly()
+    public async Task AddEnrichableLogging_WithNamedHttpClients_WorksCorrectly()
     {
         const string RequestPath = "https://we.wont.hit.this.dd22anyway.com";
 
@@ -446,7 +396,7 @@ public class HttpClientLoggingExtensionsTest
              .AddFakeLogging()
              .AddFakeRedaction()
              .AddHttpClient("namedClient1")
-             .AddHttpClientLogging(o =>
+             .AddEnrichableLogging(o =>
              {
                  o.ResponseHeadersDataClasses.Add("ResponseHeader", SimpleClassifications.PrivateData);
                  o.RequestHeadersDataClasses.Add("RequestHeader", SimpleClassifications.PrivateData);
@@ -456,7 +406,7 @@ public class HttpClientLoggingExtensionsTest
                  o.LogBody = true;
              }).Services
              .AddHttpClient("namedClient2")
-             .AddHttpClientLogging(o =>
+             .AddEnrichableLogging(o =>
              {
                  o.ResponseHeadersDataClasses.Add("ResponseHeader", SimpleClassifications.PrivateData);
                  o.RequestHeadersDataClasses.Add("RequestHeader", SimpleClassifications.PrivateData);
@@ -480,7 +430,7 @@ public class HttpClientLoggingExtensionsTest
         httpRequestMessage.Headers.Add("ReQuEStHeAdErFirst", new List<string> { "Request Value 2", "Request Value 3" });
         var responseString = await SendRequest(namedClient1, httpRequestMessage);
         var collector = provider.GetFakeLogCollector();
-        var logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.HttpLoggingHandler");
+        var logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.EnrichableHttpClientLogger");
         var state = logRecord.State as List<KeyValuePair<string, string>>;
         state.Should().Contain(kvp => kvp.Value == responseString);
         state.Should().Contain(kvp => kvp.Value == "Request Value");
@@ -495,7 +445,7 @@ public class HttpClientLoggingExtensionsTest
         httpRequestMessage2.Headers.Add("ReQuEStHeAdErSecond", new List<string> { "Request Value 2", "Request Value 3" });
         collector.Clear();
         responseString = await SendRequest(namedClient2, httpRequestMessage2);
-        logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.HttpLoggingHandler");
+        logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.EnrichableHttpClientLogger");
         state = logRecord.State as List<KeyValuePair<string, string>>;
         state.Should().Contain(kvp => kvp.Value == responseString);
         state.Should().Contain(kvp => kvp.Value == "Request Value");
@@ -514,7 +464,7 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public async Task AddHttpClientLogging_WithTypedHttpClients_WorksCorrectly()
+    public async Task AddEnrichableLogging_WithTypedHttpClients_WorksCorrectly()
     {
         const string RequestPath = "https://we.wont.hit.this.dd22anyway.com";
 
@@ -524,7 +474,7 @@ public class HttpClientLoggingExtensionsTest
             .AddSingleton<ITestHttpClient1, TestHttpClient1>()
             .AddSingleton<ITestHttpClient2, TestHttpClient2>()
             .AddHttpClient<ITestHttpClient1, TestHttpClient1>()
-            .AddHttpClientLogging(x =>
+            .AddEnrichableLogging(x =>
             {
                 x.ResponseHeadersDataClasses.Add("ResponseHeader", SimpleClassifications.PrivateData);
                 x.RequestHeadersDataClasses.Add("RequestHeader", SimpleClassifications.PrivateData);
@@ -535,7 +485,7 @@ public class HttpClientLoggingExtensionsTest
                 x.LogBody = true;
             }).Services
             .AddHttpClient<ITestHttpClient2, TestHttpClient2>()
-            .AddHttpClientLogging(x =>
+            .AddEnrichableLogging(x =>
             {
                 x.ResponseHeadersDataClasses.Add("ResponseHeader", SimpleClassifications.PrivateData);
                 x.RequestHeadersDataClasses.Add("RequestHeader", SimpleClassifications.PrivateData);
@@ -565,7 +515,7 @@ public class HttpClientLoggingExtensionsTest
         _ = await responseStream.ReadAsync(buffer, 0, 10000);
         var responseString = Encoding.UTF8.GetString(buffer);
 
-        var logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.HttpLoggingHandler");
+        var logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.EnrichableHttpClientLogger");
         var state = logRecord.State as List<KeyValuePair<string, string>>;
         state.Should().Contain(kvp => kvp.Value == responseString);
         state.Should().Contain(kvp => kvp.Value == "Request Value");
@@ -585,7 +535,7 @@ public class HttpClientLoggingExtensionsTest
         _ = await responseStream.ReadAsync(buffer, 0, 20000);
         responseString = Encoding.UTF8.GetString(buffer);
 
-        logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.HttpLoggingHandler");
+        logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.EnrichableHttpClientLogger");
         state = logRecord.State as List<KeyValuePair<string, string>>;
         state.Should().Contain(kvp => kvp.Value == responseString);
         state.Should().Contain(kvp => kvp.Value == "Request Value");
@@ -596,7 +546,7 @@ public class HttpClientLoggingExtensionsTest
     [InlineData(HttpRouteParameterRedactionMode.Strict, "v1/unit/REDACTED/users/REDACTED:123")]
     [InlineData(HttpRouteParameterRedactionMode.Loose, "v1/unit/999/users/REDACTED:123")]
     [InlineData(HttpRouteParameterRedactionMode.None, "/v1/unit/999/users/123")]
-    public async Task AddHttpClientLogging_RedactSensitivePrams(HttpRouteParameterRedactionMode parameterRedactionMode, string redactedPath)
+    public async Task AddEnrichableLogging_RedactSensitivePrams(HttpRouteParameterRedactionMode parameterRedactionMode, string redactedPath)
     {
         const string RequestPath = "https://fake.com/v1/unit/999/users/123";
 
@@ -604,11 +554,11 @@ public class HttpClientLoggingExtensionsTest
             .AddFakeLogging()
             .AddFakeRedaction(o => o.RedactionFormat = "REDACTED:{0}")
             .AddHttpClient()
-            .AddDefaultHttpClientLogging(o =>
+            .ConfigureHttpClientDefaults(b => b.AddEnrichableLogging(o =>
             {
                 o.RouteParameterDataClasses.Add("userId", SimpleClassifications.PrivateData);
                 o.RequestPathParameterRedactionMode = parameterRedactionMode;
-            })
+            }))
             .BlockRemoteCall()
             .BuildServiceProvider();
 
@@ -628,7 +578,7 @@ public class HttpClientLoggingExtensionsTest
         _ = await httpClient.SendAsync(httpRequestMessage).ConfigureAwait(false);
 
         var collector = sp.GetFakeLogCollector();
-        var logRecord = collector.GetSnapshot().Single(logRecord => logRecord.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.HttpLoggingHandler");
+        var logRecord = collector.GetSnapshot().Single(logRecord => logRecord.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.EnrichableHttpClientLogger");
         var state = logRecord.State as List<KeyValuePair<string, string>>;
         state!.Single(kvp => kvp.Key == "httpPath").Value.Should().Be(redactedPath);
     }
@@ -636,7 +586,7 @@ public class HttpClientLoggingExtensionsTest
     [Theory]
     [InlineData(HttpRouteParameterRedactionMode.Strict, "v1/unit/REDACTED/users/REDACTED:123")]
     [InlineData(HttpRouteParameterRedactionMode.Loose, "v1/unit/999/users/REDACTED:123")]
-    public async Task AddHttpClientLogging_NamedHttpClient_RedactSensitivePrams(HttpRouteParameterRedactionMode parameterRedactionMode, string redactedPath)
+    public async Task AddEnrichableLogging_NamedHttpClient_RedactSensitivePrams(HttpRouteParameterRedactionMode parameterRedactionMode, string redactedPath)
     {
         const string RequestPath = "https://fake.com/v1/unit/999/users/123";
 
@@ -644,7 +594,7 @@ public class HttpClientLoggingExtensionsTest
             .AddFakeLogging()
             .AddFakeRedaction(o => o.RedactionFormat = "REDACTED:{0}")
             .AddHttpClient("test")
-            .AddHttpClientLogging(o =>
+            .AddEnrichableLogging(o =>
             {
                 o.RouteParameterDataClasses.Add("userId", SimpleClassifications.PrivateData);
                 o.RequestPathParameterRedactionMode = parameterRedactionMode;
@@ -669,13 +619,13 @@ public class HttpClientLoggingExtensionsTest
         _ = await httpClient.SendAsync(httpRequestMessage).ConfigureAwait(false);
 
         var collector = sp.GetFakeLogCollector();
-        var logRecord = collector.GetSnapshot().Single(logRecord => logRecord.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.HttpLoggingHandler");
+        var logRecord = collector.GetSnapshot().Single(logRecord => logRecord.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.EnrichableHttpClientLogger");
         var state = logRecord.State as List<KeyValuePair<string, string>>;
         state!.Single(kvp => kvp.Key == "httpPath").Value.Should().Be(redactedPath);
     }
 
     [Fact]
-    public void AddHttpClientLogging_WithNamedClients_RegistersNamedOptions()
+    public void AddEnrichableLogging_WithNamedClients_RegistersNamedOptions()
     {
         const string FirstClientName = "1";
         const string SecondClientName = "2";
@@ -683,14 +633,14 @@ public class HttpClientLoggingExtensionsTest
         using var provider = new ServiceCollection()
             .AddFakeRedaction()
             .AddHttpClient(FirstClientName)
-            .AddHttpClientLogging(options =>
+            .AddEnrichableLogging(options =>
             {
                 options.LogRequestStart = true;
                 options.ResponseHeadersDataClasses = new Dictionary<string, DataClassification> { { "test1", SimpleClassifications.PrivateData } };
             })
             .Services
             .AddHttpClient(SecondClientName)
-            .AddHttpClientLogging(options =>
+            .AddEnrichableLogging(options =>
             {
                 options.LogRequestStart = false;
                 options.ResponseHeadersDataClasses = new Dictionary<string, DataClassification> { { "test2", SimpleClassifications.PrivateData } };
@@ -712,21 +662,21 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public void AddHttpClientLogging_WithTypedClients_RegistersNamedOptions()
+    public void AddEnrichableLogging_WithTypedClients_RegistersNamedOptions()
     {
         using var provider = new ServiceCollection()
             .AddFakeRedaction()
             .AddSingleton<ITestHttpClient1, TestHttpClient1>()
             .AddSingleton<ITestHttpClient2, TestHttpClient2>()
             .AddHttpClient<ITestHttpClient1, TestHttpClient1>()
-            .AddHttpClientLogging(options =>
+            .AddEnrichableLogging(options =>
             {
                 options.LogRequestStart = true;
                 options.ResponseHeadersDataClasses = new Dictionary<string, DataClassification> { { "test1", SimpleClassifications.PrivateData } };
             })
             .Services
             .AddHttpClient<ITestHttpClient2, TestHttpClient2>()
-            .AddHttpClientLogging(options =>
+            .AddEnrichableLogging(options =>
             {
                 options.LogRequestStart = false;
                 options.ResponseHeadersDataClasses = new Dictionary<string, DataClassification> { { "test2", SimpleClassifications.PrivateData } };
@@ -747,46 +697,46 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public void AddHttpClientLogging_WithTypedAndNamedClients_RegistersNamedOptions()
+    public void AddEnrichableLogging_WithTypedAndNamedClients_RegistersNamedOptions()
     {
         using var provider = new ServiceCollection()
             .AddFakeRedaction()
             .AddSingleton<ITestHttpClient1, TestHttpClient1>()
             .AddSingleton<ITestHttpClient2, TestHttpClient2>()
             .AddHttpClient<ITestHttpClient1, TestHttpClient1>()
-            .AddHttpClientLogging(options =>
+            .AddEnrichableLogging(options =>
             {
                 options.ResponseHeadersDataClasses = new Dictionary<string, DataClassification> { { "test1", SimpleClassifications.PrivateData } };
             })
             .Services
             .AddHttpClient<ITestHttpClient2, TestHttpClient2>()
-            .AddHttpClientLogging(options =>
+            .AddEnrichableLogging(options =>
             {
                 options.ResponseHeadersDataClasses = new Dictionary<string, DataClassification> { { "test2", SimpleClassifications.PrivateData } };
             })
             .Services
             .AddHttpClient("testClient3")
-            .AddHttpClientLogging(options =>
+            .AddEnrichableLogging(options =>
             {
                 options.ResponseHeadersDataClasses = new Dictionary<string, DataClassification> { { "test3", SimpleClassifications.PrivateData } };
             })
             .Services
             .AddHttpClient("testClient4")
-            .AddHttpClientLogging(options =>
+            .AddEnrichableLogging(options =>
             {
                 options.ResponseHeadersDataClasses = new Dictionary<string, DataClassification> { { "test4", SimpleClassifications.PrivateData } };
             })
             .Services
             .AddHttpClient<ITestHttpClient1, TestHttpClient1>("testClient5")
-            .AddHttpClientLogging(options =>
+            .AddEnrichableLogging(options =>
             {
                 options.ResponseHeadersDataClasses = new Dictionary<string, DataClassification> { { "test5", SimpleClassifications.PrivateData } };
             })
             .Services
-            .AddDefaultHttpClientLogging(options =>
+            .ConfigureHttpClientDefaults(b => b.AddEnrichableLogging(options =>
             {
                 options.ResponseHeadersDataClasses = new Dictionary<string, DataClassification> { { "test6", SimpleClassifications.PrivateData } };
-            })
+            }))
             .BuildServiceProvider();
 
         var optionsFirst = provider.GetRequiredService<IOptionsMonitor<LoggingOptions>>().Get(nameof(ITestHttpClient1));
@@ -812,14 +762,14 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public async Task AddHttpClientLogging_DisablesNetScope()
+    public async Task AddEnrichableLogging_DisablesNetScope()
     {
         const string RequestPath = "https://we.wont.hit.this.dd22anyway.com";
         await using var provider = new ServiceCollection()
              .AddFakeLogging()
              .AddFakeRedaction()
              .AddHttpClient("test")
-             .AddHttpClientLogging()
+             .AddEnrichableLogging()
              .Services
              .BlockRemoteCall()
              .BuildServiceProvider();
@@ -829,27 +779,27 @@ public class HttpClientLoggingExtensionsTest
 
         _ = await client.SendAsync(httpRequestMessage, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
         var collector = provider.GetFakeLogCollector();
-        var logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.HttpLoggingHandler");
+        var logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.EnrichableHttpClientLogger");
 
         logRecord.Scopes.Should().HaveCount(0);
     }
 
     [Fact]
-    public async Task AddHttpClientLogging_CallFromOtherClient_HasBuiltInLogging()
+    public async Task AddEnrichableLogging_CallFromOtherClient_HasBuiltInLogging()
     {
         const string RequestPath = "https://we.wont.hit.this.dd22anyway.com";
         await using var provider = new ServiceCollection()
              .AddFakeLogging()
              .AddFakeRedaction()
              .AddHttpClient("test")
-             .AddHttpClientLogging()
+             .AddEnrichableLogging()
              .Services
              .AddHttpClient("normal")
              .Services
              .BlockRemoteCall()
              .BuildServiceProvider();
 
-        // The test client has AddHttpClientLogging. The normal client doesn't.
+        // The test client has AddEnrichableLogging. The normal client doesn't.
         // The normal client should still log via the builtin HTTP logging.
         var client = provider.GetRequiredService<IHttpClientFactory>().CreateClient("normal");
         using var httpRequestMessage = new HttpRequestMessage(HttpMethod.Get, new Uri(RequestPath));
@@ -864,14 +814,14 @@ public class HttpClientLoggingExtensionsTest
     }
 
     [Fact]
-    public async Task AddDefaultHttpClientLogging_DisablesNetScope()
+    public async Task AddDefaultEnrichableLogging_DisablesNetScope()
     {
         const string RequestPath = "https://we.wont.hit.this.dd22anyway.com";
         await using var provider = new ServiceCollection()
              .AddFakeLogging()
              .AddFakeRedaction()
              .AddHttpClient()
-             .AddDefaultHttpClientLogging()
+             .ConfigureHttpClientDefaults(b => b.AddEnrichableLogging())
              .BlockRemoteCall()
              .BuildServiceProvider();
         var options = provider.GetRequiredService<IOptionsMonitor<LoggingOptions>>().Get("test");
@@ -880,7 +830,7 @@ public class HttpClientLoggingExtensionsTest
 
         _ = await client.SendAsync(httpRequestMessage, HttpCompletionOption.ResponseHeadersRead).ConfigureAwait(false);
         var collector = provider.GetFakeLogCollector();
-        var logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.HttpLoggingHandler");
+        var logRecord = collector.GetSnapshot().Single(l => l.Category == "Microsoft.Extensions.Http.Telemetry.Logging.Internal.EnrichableHttpClientLogger");
 
         logRecord.Scopes.Should().HaveCount(0);
     }
